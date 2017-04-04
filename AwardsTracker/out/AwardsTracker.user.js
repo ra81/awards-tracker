@@ -12,8 +12,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // @author         ra81
 // @description    Отслеживает призы и если чет пропало или добавилось будет сигнализировать
 // @include        http*://virtonomic*.*/*/main/company/view/*/unit_list
+// @include        http*://virtonomic*.*/*/main/company/rank/*
 // @require        https://code.jquery.com/jquery-1.11.1.min.js
-// @version        1.0
+// @version        1.1
 // ==/UserScript== 
 //// /// <reference path= "../../_jsHelper/jsHelper/jsHelper.ts" />
 $ = jQuery = jQuery.noConflict(true);
@@ -24,6 +25,21 @@ let DataVersion = 1; // версия сохраняемых данных. При
 let StorageKeyCode = "prt";
 function Start_async() {
     return __awaiter(this, void 0, void 0, function* () {
+        // сортирнем иконки чтобы не было беспорядка
+        let rx = /\/[a-z]+\/main\/company\/rank\/\d+\/?/i;
+        if (rx.test(document.location.pathname)) {
+            let $container = $(document).find("div.d-award");
+            let imgs = $container.find("img").get();
+            imgs.sort((a, b) => {
+                let asrc = a.getAttribute("src");
+                let bsrc = b.getAttribute("src");
+                if (asrc > bsrc)
+                    return 1;
+                return -1;
+            });
+            $container.children().remove();
+            $container.append(imgs);
+        }
         if (!isMyUnitList())
             return;
         // читаем хранилище на наличие вчерашних наград

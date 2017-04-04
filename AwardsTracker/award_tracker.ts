@@ -16,6 +16,27 @@ interface IAwardsInfo {
 }
 
 async function Start_async() {
+    // сортирнем иконки чтобы не было беспорядка
+    let rx = /\/[a-z]+\/main\/company\/rank\/\d+\/?/i;
+    if (rx.test(document.location.pathname)) {
+        let $container = $(document).find("div.d-award");
+
+        let imgs = $container.find("img").get();
+        imgs.sort((a, b) => {
+            let asrc = a.getAttribute("src");
+            let bsrc = b.getAttribute("src");
+
+            if (asrc > bsrc)
+                return 1;
+
+            return -1;
+        });
+
+        $container.children().remove();
+        $container.append(imgs);
+        //.map((i, el) => $(el).attr("src")).get() as any as string[];
+    }
+
     if (!isMyUnitList())
         return;
 
